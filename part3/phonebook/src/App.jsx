@@ -26,7 +26,9 @@ const App = () => {
   // Alert auto remove
   useEffect(() => {
     if (alert) {
-      setTimeout(() => setAlert(null), 5000);
+      const timeout = setTimeout(() => setAlert(null), 5000);
+
+      return () => clearTimeout(timeout);
     }
   }, [alert]);
 
