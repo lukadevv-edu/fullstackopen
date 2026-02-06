@@ -8,8 +8,8 @@
   "main": "src/index.js",
   "scripts": {
     "start": "node src/index.js",
-    "dev": "nodemon src/index.js",
-    "test": "node --test"
+    "dev": "nodemon --env-file=.env.development src/index.js",
+    "test": "node --env-file=.env.test --test"
   },
   "dependencies": {
     "cors": "^2.8.6",
@@ -18,6 +18,7 @@
     "mongoose": "^9.1.6"
   },
   "devDependencies": {
-    "nodemon": "^3.1.11"
+    "nodemon": "^3.1.11",
+    "supertest": "^7.2.2"
   }
 }
