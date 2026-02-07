@@ -4,7 +4,7 @@ const supertest = require("supertest");
 const app = require("../app");
 const assert = require("node:assert");
 const { Blog } = require("../models/Blog");
-const { title } = require("node:process");
+const { User } = require("../models/User");
 
 const api = supertest(app);
 
@@ -61,10 +61,17 @@ const blogs = [
 
 Object.freeze(blogs);
 
+const userCredentials = {
+  name: "Lucas",
+  username: "lukadevv",
+  password: "123123",
+};
+
 {
   beforeEach(async () => {
     await Blog.deleteMany({});
     await Blog.insertMany(blogs);
+    await User.deleteMany({});
   });
 
   after(async () => {
@@ -72,95 +79,147 @@ Object.freeze(blogs);
   });
 }
 
-describe("Blog 'READ' tests", () => {
-  test("blogs endpoint returns correct length", async () => {
-    const body = (await api.get("/api/blogs")).body;
-
-    // Equals to initial blogs value length
-    assert.strictEqual(body.length, blogs.length);
-  });
-
-  test("[toJSON] '_id' key has not to be defined", async () => {
-    const body = (await api.get("/api/blogs")).body;
-
-    for (const blog of body) {
-      assert.strictEqual(blog._id, undefined);
-      assert(blog.id);
-    }
-  });
-});
-
-describe("Blog 'CREATE' tests", () => {
-  test("check if it was added", async () => {
+describe("Blog unauthorized test", () => {
+  test("create new blog", async () => {
     const newBlog = {
       title: "Testing",
       author: "lukadevv",
       url: "https://lukadevv.com/",
-      likes: 402,
+      likes: 24,
     };
 
     await api
       .post("/api/blogs")
       .send(newBlog)
-      .expect(201)
+      .expect(401)
       .expect("Content-Type", /application\/json/);
-
-    const result = await api.get("/api/blogs");
-
-    assert.strictEqual(result.body.length, blogs.length + 1);
-    assert(result.body.some((each) => each.title.includes(newBlog.title)));
-  });
-
-  test("check if likes property is added by default", async () => {
-    const newBlog = {
-      title: "Another Post",
-      author: "lukadevv",
-      url: "https://lukadevv.com/",
-    };
-
-    const response = await api
-      .post("/api/blogs")
-      .send(newBlog)
-      .expect(201)
-      .expect("Content-Type", /application\/json/);
-
-    assert.strictEqual(response.body.likes, 0);
-  });
-
-  test("wrong new blog creation", async () => {
-    const newBlog = {
-      title: "Malformed Data",
-      author: "lukadevv",
-    };
-
-    await api.post("/api/blogs").send(newBlog).expect(400);
   });
 });
 
-describe("Blog 'UPDATE' tests", () => {
-  test("likes increase", async () => {
-    const targetBlog = blogs[0];
-    const result = await api
-      .put(`/api/blogs/${targetBlog._id}`)
-      .send({
-        likes: targetBlog.likes + 1,
-      })
-      .expect(200)
+describe("Authorized test", () => {
+  let token;
+
+  beforeEach(async () => {
+    // Register
+    await api
+      .post("/api/users")
+      .send(userCredentials)
+      .expect(201)
       .expect("Content-Type", /application\/json/);
 
-    assert.strictEqual(result.body.likes, targetBlog.likes + 1);
+    // Extract jwt token from login result
+    const response = await api.post("/login").send({
+      username: userCredentials.username,
+      password: userCredentials.password,
+    });
+
+    token = response.body.token;
   });
 
-  test("title changed", async () => {
-    const targetBlog = blogs[0];
-    const result = await api
-      .put(`/api/blogs/${targetBlog._id}`)
-      .send({
-        title: "modified",
-      })
-      .expect(200)
-      .expect("Content-Type", /application\/json/);
+  describe("Blog 'READ' tests", () => {
+    test("blogs endpoint returns correct length", async () => {
+      const body = (
+        await api.get("/api/blogs").set("Authorization", `Bearer ${token}`)
+      ).body;
 
-    assert.strictEqual(result.body.title, "modified");
+      // Equals to initial blogs value length
+      assert.strictEqual(body.length, blogs.length);
+    });
+
+    test("[toJSON] '_id' key has not to be defined", async () => {
+      const body = (
+        await api.get("/api/blogs").set("Authorization", `Bearer ${token}`)
+      ).body;
+
+      for (const blog of body) {
+        assert.strictEqual(blog._id, undefined);
+        assert(blog.id);
+      }
+    });
+  });
+
+  describe("Blog 'CREATE' tests", () => {
+    test("check if it was added", async () => {
+      const newBlog = {
+        title: "Testing",
+        author: "lukadevv",
+        url: "https://lukadevv.com/",
+        likes: 402,
+      };
+
+      await api
+        .post("/api/blogs")
+        .set("Authorization", `Bearer ${token}`)
+        .send(newBlog)
+        .expect(201)
+        .expect("Content-Type", /application\/json/);
+
+      const result = await api
+        .get("/api/blogs")
+        .set("Authorization", `Bearer ${token}`);
+
+      assert.strictEqual(result.body.length, blogs.length + 1);
+      assert(result.body.some((each) => each.title.includes(newBlog.title)));
+    });
+
+    test("check if likes property is added by default", async () => {
+      const newBlog = {
+        title: "Another Post",
+        author: "lukadevv",
+        url: "https://lukadevv.com/",
+      };
+
+      const response = await api
+        .post("/api/blogs")
+        .set("Authorization", `Bearer ${token}`)
+        .send(newBlog)
+        .expect(201)
+        .expect("Content-Type", /application\/json/);
+
+      assert.strictEqual(response.body.likes, 0);
+    });
+
+    test("wrong new blog creation", async () => {
+      const newBlog = {
+        title: "Malformed Data",
+        author: "lukadevv",
+      };
+
+      await api
+        .post("/api/blogs")
+        .set("Authorization", `Bearer ${token}`)
+        .send(newBlog)
+        .expect(400);
+    });
+  });
+
+  describe("Blog 'UPDATE' tests", () => {
+    test("likes increase", async () => {
+      const targetBlog = blogs[0];
+      const result = await api
+        .put(`/api/blogs/${targetBlog._id}`)
+        .set("Authorization", `Bearer ${token}`)
+        .send({
+          likes: targetBlog.likes + 1,
+        })
+        .expect(200)
+        .expect("Content-Type", /application\/json/);
+
+      assert.strictEqual(result.body.likes, targetBlog.likes + 1);
+    });
+
+    test("title changed", async () => {
+      const targetBlog = blogs[0];
+      const result = await api
+        .put(`/api/blogs/${targetBlog._id}`)
+        .set("Authorization", `Bearer ${token}`)
+        .send({
+          title: "modified",
+        })
+        .expect(200)
+        .expect("Content-Type", /application\/json/);
+
+      assert.strictEqual(result.body.title, "modified");
+    });
   });
 });

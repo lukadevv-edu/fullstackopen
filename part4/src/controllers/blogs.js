@@ -2,28 +2,50 @@ const router = require("express").Router();
 const { Blog } = require("../models/Blog");
 
 router.get("/", async (request, response) => {
-  const blogs = await Blog.find({});
+  const blogs = await Blog.find({}).populate("user");
 
   response.json(blogs);
 });
 
 router.post("/", async (request, response, next) => {
-  try {
-    const blog = new Blog(request.body);
-    const result = await blog.save();
+  const body = request.body;
 
-    response.status(201).json(result);
-  } catch (e) {
-    if (e.name === "ValidationError") {
-      return response.status(400).end();
-    }
+  const user = request.user;
 
-    next(e);
-  }
+  const blog = new Blog({
+    ...body,
+    user: user.id,
+  });
+
+  const result = await blog.save();
+
+  user.blogs = user.blogs.concat(result.id);
+
+  await user.save();
+
+  response.status(201).json(result);
 });
 
 router.delete("/:id", async (request, response) => {
-  const result = await Blog.deleteOne(request.params["id"]);
+  const user = request.user;
+
+  const foundBlog = await Blog.findById(request.params["id"]);
+
+  if (!foundBlog) {
+    return response.status(404).json({ error: "Blog doesn't exist" });
+  }
+
+  if (foundBlog.user.toString() !== request.token.id.toString()) {
+    return response.status(403).json({ error: "This blog is not yours!" });
+  }
+
+  const result = await Blog.deleteOne({
+    _id: request.params["id"],
+  });
+
+  user.blogs = user.blogs.filter((blog) => blog.id !== request.params["id"]);
+
+  await user.save();
 
   response.status(result.deletedCount < 1 ? 404 : 204).end();
 });
