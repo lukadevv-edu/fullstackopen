@@ -11,7 +11,7 @@ app.use(express.json());
 
 app.use(require("./middleware/auth.middleware"));
 
-app.use("/login", require("./controllers/auth"));
+app.use("/api/login", require("./controllers/auth"));
 app.use(
   "/api/blogs",
   require("./middleware/user.middleware"),
