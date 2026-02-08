@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-const Blog = ({ blog, onLike, onRemove }) => {
+const Blog = ({ username, blog, onLike, onRemove }) => {
   const blogStyle = {
     alignItems: "center",
     paddingTop: 10,
@@ -40,7 +40,9 @@ const Blog = ({ blog, onLike, onRemove }) => {
             <button onClick={onLike}>like</button>
           </div>
           <p>{blog.author}</p>
-          <button onClick={onRemove}>remove</button>
+          {username === blog.user.username && (
+            <button onClick={onRemove}>remove</button>
+          )}
         </div>
       )}
     </div>

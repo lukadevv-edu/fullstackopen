@@ -8,7 +8,9 @@
   "main": "index.js",
   "scripts": {
     "test": "playwright test",
-    "test:report": "playwright show-report"
+    "test:report": "playwright show-report",
+    "test:debug": "set PWDEBUG=1 && npx playwright test tests/blogs.spec.js",
+    "test:debug:blog": "set PWDEBUG=1 && npx playwright test tests/blogs.spec.js -g \"sort by likes\""
   },
   "devDependencies": {
     "@playwright/test": "^1.58.2",

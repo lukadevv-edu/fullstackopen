@@ -1,5 +1,6 @@
 const router = require("express").Router();
 const { Blog } = require("../models/Blog");
+const { User } = require("../models/User");
 
 router.get("/", async (request, response) => {
   const blogs = await Blog.find({}).populate("user");
@@ -19,9 +20,7 @@ router.post("/", async (request, response, next) => {
 
   const result = await blog.save();
 
-  user.blogs = user.blogs.concat(result.id);
-
-  await user.save();
+  await User.findByIdAndUpdate(user.id, { $push: { blogs: result._id } });
 
   response.status(201).json(result);
 });
@@ -43,9 +42,9 @@ router.delete("/:id", async (request, response) => {
     _id: request.params["id"],
   });
 
-  user.blogs = user.blogs.filter((blog) => blog.id !== request.params["id"]);
-
-  await user.save();
+  await User.findByIdAndUpdate(user.id, {
+    $pull: { blogs: request.params.id },
+  });
 
   response.status(result.deletedCount < 1 ? 404 : 204).end();
 });
@@ -55,6 +54,7 @@ router.put("/:id", async (request, response) => {
 
   const result = await Blog.findByIdAndUpdate(request.params.id, blog, {
     new: true,
+    runValidators: true,
   });
 
   response.json(result);

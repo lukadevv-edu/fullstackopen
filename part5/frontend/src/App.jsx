@@ -12,12 +12,9 @@ const App = () => {
   const [password, setPassword] = useState("");
   const [alert, setAlert] = useState(null);
 
-  const setBlogs = useCallback(
-    (blogsFC) => {
-      setRawBlogs([...blogsFC(blogs)].sort((a, b) => b.likes - a.likes));
-    },
-    [blogs],
-  );
+  const setBlogs = useCallback((blogsFC) => {
+    setRawBlogs((old) => [...blogsFC(old)].sort((a, b) => b.likes - a.likes));
+  }, []);
 
   const onLike = useCallback(
     (blog) => {

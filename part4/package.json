@@ -8,7 +8,9 @@
   "main": "src/index.js",
   "scripts": {
     "start": "node src/index.js",
+    "start:test": "node --env-file=.env.test src/index.js",
     "dev": "nodemon --env-file=.env.development src/index.js",
+    "dev:test": "nodemon --env-file=.env.test src/index.js",
     "test": "node --env-file=.env.test --test"
   },
   "dependencies": {
@@ -18,7 +20,8 @@
     "express": "^4.22.1",
     "express-async-errors": "^3.1.1",
     "jsonwebtoken": "^9.0.3",
-    "mongoose": "^9.1.6"
+    "mongoose": "^9.1.6",
+    "morgan": "^1.10.1"
   },
   "devDependencies": {
     "nodemon": "^3.1.11",
