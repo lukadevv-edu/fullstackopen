@@ -6,11 +6,49 @@ import { AddForm } from "./components/AddForm";
 import { Alert } from "./components/Alert";
 
 const App = () => {
-  const [blogs, setBlogs] = useState([]);
+  const [blogs, setRawBlogs] = useState([]);
   const [user, setUser] = useState(null);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [alert, setAlert] = useState(null);
+
+  const setBlogs = useCallback(
+    (blogsFC) => {
+      setRawBlogs([...blogsFC(blogs)].sort((a, b) => b.likes - a.likes));
+    },
+    [blogs],
+  );
+
+  const onLike = useCallback(
+    (blog) => {
+      blogService.addLike(user, blog).then((r) => {
+        setBlogs((old) =>
+          old.map((each) => {
+            if (each.id === blog.id) {
+              return {
+                ...each,
+                likes: r.likes,
+              };
+            }
+
+            return each;
+          }),
+        );
+      });
+    },
+    [setBlogs, user],
+  );
+
+  const onRemove = useCallback(
+    (blog) => {
+      if (window.confirm(`Remove blog ${blog.title} by ${blog.author}`)) {
+        blogService.remove(user, blog.id).then(() => {
+          setBlogs((old) => old.filter((each) => each.id !== blog.id));
+        });
+      }
+    },
+    [setBlogs, user],
+  );
 
   // local storage
   const [loading, setLoading] = useState(true);
@@ -67,12 +105,33 @@ const App = () => {
       return;
     }
 
-    blogService.getAll(user).then((blogs) => setBlogs(blogs));
+    blogService.getAll(user).then((blogs) => setBlogs(() => blogs));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user]);
 
-  // useEffect(() => {
-  //   blogService.getAll().then((blogs) => setBlogs(blogs));
-  // }, []);
+  const handleSubmit = useCallback(
+    (e, title, author, url) => {
+      e.preventDefault();
+
+      blogService
+        .createBlog(user, title, author, url)
+        .then((newBlog) => {
+          setAlert({
+            message: `a new blog ${title} by ${author} added`,
+            alertType: "success",
+          });
+
+          setBlogs((old) => old.concat(newBlog));
+        })
+        .catch((e) => {
+          setAlert({
+            message: e?.message ?? e?.error?.message ?? "Error caught!",
+            alertType: "error",
+          });
+        });
+    },
+    [setAlert, setBlogs, user],
+  );
 
   if (loading) {
     return (
@@ -126,14 +185,14 @@ const App = () => {
           <button onClick={handleLogout}>logout</button>
         </div>
       </div>
-
-      <div>
-        <h2>create new</h2>
-        <AddForm user={user} setAlert={setAlert} />
-      </div>
-
+      <AddForm handleSubmit={handleSubmit} />
       {blogs.map((blog) => (
-        <Blog key={blog.id} blog={blog} />
+        <Blog
+          key={blog.id}
+          blog={blog}
+          onLike={() => onLike(blog)}
+          onRemove={() => onRemove(blog)}
+        />
       ))}
     </main>
   );

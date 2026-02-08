@@ -5,7 +5,7 @@ export function Alert({ alert }) {
 
   const { message, alertType } = alert;
 
-  if (alertType === "error") {
+  if (alertType === 'error') {
     return (
       <div className="alert error">
         <p>{message}</p>
