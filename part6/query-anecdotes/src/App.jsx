@@ -28,7 +28,7 @@ const App = () => {
     },
   })
 
-  const handleVote = (id, votes, anecdote) => {
+  const handleVote = (id, votes) => {
     mutation.mutate({
       id,
       votes: votes + 1,
