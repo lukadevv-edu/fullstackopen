@@ -1,17 +1,25 @@
 import { useDispatch } from "react-redux";
-import { createAnecdote } from "../reducers/anecdoteReducer";
+import { createAnedcote } from "../reducers/anecdoteReducer";
+import { sendNotification } from "../reducers/notificationReducer";
 
 export function AnecdotesForm() {
   const dispatch = useDispatch();
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     const content = e.target.anecdote.value;
 
     e.target.anecdote.value = "";
 
-    dispatch(createAnecdote(content));
+    dispatch(createAnedcote(content));
+
+    dispatch(
+      sendNotification({
+        type: "success",
+        message: `you have created '${content}'`,
+      }),
+    );
   };
 
   return (
