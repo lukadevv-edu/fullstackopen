@@ -1,0 +1,92 @@
+{
+  "anecdotes": [
+    {
+      "content": "If it hurts, do it more often",
+      "id": "47145",
+      "votes": 9,
+      "client": {}
+    },
+    {
+      "content": "Adding manpower to a late software project makes it later!",
+      "id": "21149",
+      "votes": 10
+    },
+    {
+      "content": "The first 90 percent of the code accounts for the first 90 percent of the development time...The remaining 10 percent of the code accounts for the other 90 percent of the development time.",
+      "id": "69581",
+      "votes": 2
+    },
+    {
+      "content": "Any fool can write code that a computer can understand. Good programmers write code that humans can understand.",
+      "id": "36975",
+      "votes": 4
+    },
+    {
+      "content": "Premature optimization is the root of all evil.",
+      "id": "25170",
+      "votes": 0
+    },
+    {
+      "content": "Debugging is twice as hard as writing the code in the first place. Therefore, if you write the code as cleverly as possible, you are, by definition, not smart enough to debug it.",
+      "id": "98312",
+      "votes": 0,
+      "client": {}
+    },
+    {
+      "id": "152451",
+      "content": "wdadwadaw",
+      "votes": 0
+    },
+    {
+      "id": "872161",
+      "content": "wdadwadaw",
+      "votes": 0
+    },
+    {
+      "id": "278005",
+      "content": "ZZZZZZZ",
+      "votes": 0
+    },
+    {
+      "id": "7386",
+      "content": "ZZZZZZZ",
+      "votes": 0
+    },
+    {
+      "id": "773166",
+      "content": "DAWAWDAWDAWD",
+      "votes": 0,
+      "client": {}
+    },
+    {
+      "id": "727148",
+      "content": "dasasdads",
+      "votes": 0
+    },
+    {
+      "id": "190486",
+      "content": "dfgdfgfg",
+      "votes": 0
+    },
+    {
+      "id": "899129",
+      "content": "gdfdfggdf",
+      "votes": 0
+    },
+    {
+      "id": "423162",
+      "content": "wdaawd",
+      "votes": 0
+    },
+    {
+      "id": "525340",
+      "content": "zxczxc",
+      "votes": 0
+    },
+    {
+      "id": "235518",
+      "content": "asdadsdas",
+      "votes": 0
+    }
+  ]
+}
