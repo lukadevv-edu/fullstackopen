@@ -14,12 +14,7 @@ export function AnecdotesForm() {
 
     dispatch(createAnedcote(content));
 
-    dispatch(
-      sendNotification({
-        type: "success",
-        message: `you have created '${content}'`,
-      }),
-    );
+    dispatch(sendNotification(`you have created '${content}'`, 5000));
   };
 
   return (

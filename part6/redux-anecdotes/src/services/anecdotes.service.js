@@ -25,4 +25,18 @@ const createNew = async (anecdote) => {
   return await response.json();
 };
 
-export default { getAll, createNew };
+const updateAnecdote = async (id, content) => {
+  const response = await fetch(`${baseUrl}/${id}`, {
+    method: "PATCH",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(content),
+  });
+
+  if (!response.ok) {
+    throw new Error("Failed to create note");
+  }
+
+  return await response.json();
+};
+
+export default { getAll, createNew, updateAnecdote };

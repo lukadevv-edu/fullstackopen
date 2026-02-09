@@ -5,10 +5,7 @@ const notificationSlice = createSlice({
   initialState: null,
   reducers: {
     setMessage: (_, action) => {
-      return {
-        type: action.payload.type === "error" ? "error" : "success",
-        message: action.payload.message,
-      };
+      return action.payload;
     },
     clear: () => {
       return null;
@@ -18,13 +15,14 @@ const notificationSlice = createSlice({
 
 const { clear, setMessage } = notificationSlice.actions;
 
-// Hook
-export const sendNotification = (payload) => (dispatch) => {
+// Thunks
+
+export const sendNotification = (payload, timeoutMs) => (dispatch) => {
   dispatch(setMessage(payload));
 
   setTimeout(() => {
     dispatch(clear());
-  }, 5000);
+  }, timeoutMs);
 };
 
 export default notificationSlice.reducer;
