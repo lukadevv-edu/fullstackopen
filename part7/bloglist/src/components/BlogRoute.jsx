@@ -5,6 +5,8 @@ import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
 import blogService from "../services/blogs";
 import { sendNotification } from "../reducers/notificationReducer";
+import Button from "react-bootstrap/esm/Button";
+import Container from "react-bootstrap/esm/Container";
 
 export function BlogRoute() {
   const { id } = useParams();
@@ -104,34 +106,60 @@ export function BlogRoute() {
   }
 
   return (
-    <div>
-      <h2>
+    <Container className="bg-light">
+      <h2
+        style={{
+          textAlign: "center",
+          paddingTop: 5,
+        }}
+      >
         {blogData.title} {blogData.author}
       </h2>
+      <hr />
       <a href={blogData.url} target="_blank" rel="noreferrer">
         {blogData.url}
       </a>
-      <div>
+      <Container
+        style={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "right",
+          gap: 5,
+        }}
+      >
         <p>
           {blogData.likes}
           <span> likes</span>
         </p>
-        <button onClick={() => likeMutation.mutate(blogData)}>like</button>
-      </div>
+        <Button onClick={() => likeMutation.mutate(blogData)}>like</Button>
+      </Container>
       <p>added by {blogData.author}</p>
       {user && user.username === blogData.user.username && (
-        <button onClick={() => removeMutation.mutate(blogData)}>remove</button>
+        <Button
+          variant="danger"
+          onClick={() => removeMutation.mutate(blogData)}
+        >
+          remove
+        </Button>
       )}
-      <h3>comments</h3>
+      <hr />
+      <h3>Comments</h3>
       <form onSubmit={handleSubmit}>
         <input type="text" name="comment" />
-        <button type="submit">add comment</button>
+        <Button
+          type="submit"
+          style={{
+            marginLeft: 5,
+          }}
+        >
+          add comment
+        </Button>
       </form>
       <ul>
         {blogData.comments?.map((each, i) => (
           <li key={each + i}>{each}</li>
         ))}
       </ul>
-    </div>
+    </Container>
   );
 }

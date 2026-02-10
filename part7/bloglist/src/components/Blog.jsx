@@ -1,17 +1,9 @@
+import Container from "react-bootstrap/esm/Container";
 import { Link } from "react-router-dom";
 
 const Blog = ({ blog }) => {
-  const blogStyle = {
-    alignItems: "center",
-    paddingTop: 10,
-    paddingLeft: 2,
-    border: "solid",
-    borderWidth: 1,
-    marginBottom: 5,
-  };
-
   return (
-    <div style={blogStyle}>
+    <Container className="border my-2">
       <div
         style={{
           display: "flex",
@@ -22,7 +14,7 @@ const Blog = ({ blog }) => {
           {blog.title} {blog.author}
         </Link>
       </div>
-    </div>
+    </Container>
   );
 };
 

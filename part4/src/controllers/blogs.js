@@ -22,7 +22,7 @@ router.post("/", async (request, response, next) => {
 
   await User.findByIdAndUpdate(user.id, {
     $push: { blogs: result._id },
-  }).populate("user");
+  });
 
   response.status(201).json({
     ...result,

@@ -1,18 +1,5 @@
-.alert {
-  padding: 3px;
-  border: 2px solid black;
-  margin: 2px;
-  border-radius: 15px;
-  background-color: darkgray;
-  font-weight: bold;
-  font-size: large;
-}
-
-.alert.success {
-  color: green;
-  border-color: green;
-}
-.alert.error {
-  color: red;
-  border-color: red;
+main {
+  max-width: 900px;
+  margin: auto;
+  padding: 0 15px 0 15px;
 }

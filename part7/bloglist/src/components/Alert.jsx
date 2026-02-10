@@ -1,4 +1,5 @@
 import { useSelector } from "react-redux";
+import BAlert from "react-bootstrap/Alert";
 
 export function Alert() {
   const alert = useSelector(({ notification }) => notification);
@@ -9,17 +10,9 @@ export function Alert() {
 
   const { message, alertType } = alert;
 
-  if (alertType === "error") {
-    return (
-      <div className="alert error">
-        <p>{message}</p>
-      </div>
-    );
-  } else {
-    return (
-      <div className="alert success">
-        <p>{message}</p>
-      </div>
-    );
-  }
+  return (
+    <BAlert className="my-2" variant={alertType === "error" ? "danger" : "success"}>
+      <p className="mb-0">{message}</p>
+    </BAlert>
+  );
 }

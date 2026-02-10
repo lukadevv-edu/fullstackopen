@@ -5,6 +5,8 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useSelector, useDispatch } from "react-redux";
 import { useCallback } from "react";
 import { sendNotification } from "../reducers/notificationReducer";
+import Container from "react-bootstrap/esm/Container";
+import Button from "react-bootstrap/esm/Button";
 
 export function AddForm() {
   const [title, setTitle] = useState("");
@@ -56,21 +58,24 @@ export function AddForm() {
 
   return (
     <Togglable ref={createBlogRef} buttonLabel="create new blog">
-      <div>
-        <h2>create new</h2>
+      <Container className="bg-light p-3 mb-2">
+        <h2 className="mb-3">Create New</h2>
 
         <form
           onSubmit={(e) => {
             handleSubmit(e, title, author, url);
-
             setTitle("");
             setAuthor("");
             setUrl("");
           }}
+          className="d-flex flex-column gap-3"
         >
           <div>
-            title
+            <label htmlFor="create-title" className="form-label">
+              Title
+            </label>
             <input
+              className="form-control"
               id="create-title"
               type="text"
               value={title}
@@ -78,9 +83,13 @@ export function AddForm() {
               onChange={({ target }) => setTitle(target.value)}
             />
           </div>
+
           <div>
-            author
+            <label htmlFor="create-author" className="form-label">
+              Author
+            </label>
             <input
+              className="form-control"
               id="create-author"
               type="text"
               value={author}
@@ -88,9 +97,13 @@ export function AddForm() {
               onChange={({ target }) => setAuthor(target.value)}
             />
           </div>
+
           <div>
-            url
+            <label htmlFor="create-url" className="form-label">
+              URL
+            </label>
             <input
+              className="form-control"
               id="create-url"
               type="text"
               value={url}
@@ -98,9 +111,12 @@ export function AddForm() {
               onChange={({ target }) => setUrl(target.value)}
             />
           </div>
-          <button type="submit">create</button>
+
+          <Button className="btn btn-primary align-self-start" type="submit">
+            Create
+          </Button>
         </form>
-      </div>
+      </Container>
     </Togglable>
   );
 }

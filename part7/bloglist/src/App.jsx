@@ -4,8 +4,7 @@ import blogService from "./services/blogs";
 import { AddForm } from "./components/AddForm";
 import { Alert } from "./components/Alert";
 import { useDispatch, useSelector } from "react-redux";
-import { sendNotification } from "./reducers/notificationReducer";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { initLoggedUser, loginUser, logoutUser } from "./reducers/userReducer";
 import { Users } from "./components/Users";
 import {
@@ -17,9 +16,13 @@ import {
 } from "react-router-dom";
 import { User } from "./components/User";
 import { BlogRoute } from "./components/BlogRoute";
+import Container from "react-bootstrap/Container";
+import Nav from "react-bootstrap/Nav";
+import Navbar from "react-bootstrap/Navbar";
+import Button from "react-bootstrap/esm/Button";
+import Spinner from "react-bootstrap/Spinner";
 
 const App = () => {
-  const queryClient = useQueryClient();
   const dispatch = useDispatch();
   const user = useSelector(({ user }) => user);
   const [username, setUsername] = useState("");
@@ -57,8 +60,15 @@ const App = () => {
 
   if (queryGetAll.isLoading) {
     return (
-      <div>
-        <p>Loading...</p>
+      <div
+        style={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          height: "100vh",
+        }}
+      >
+        <Spinner />
       </div>
     );
   }
@@ -72,113 +82,116 @@ const App = () => {
   }
 
   return (
-    <Router>
-      <Alert />
-      {user && (
-        <>
-          <header
-            style={{
-              background: "gray",
-              padding: 10,
-            }}
+    <main>
+      <Router>
+        {user && (
+          <>
+            <header className="p-2">
+              <Navbar expand="lg" className="bg-body-tertiary">
+                <Container>
+                  <div className="d-flex align-items-center gap-2 w-100">
+                    <Navbar.Toggle aria-controls="basic-navbar-nav" />
+                    <Navbar.Brand as={Link} to="/" className="me-2">
+                      Blog App
+                    </Navbar.Brand>
+                    <Navbar.Collapse id="basic-navbar-nav">
+                      <Nav className="me-auto">
+                        <Nav.Link as={Link} to="/blogs">
+                          Blogs
+                        </Nav.Link>
+                        <Nav.Link as={Link} to="/users">
+                          Users
+                        </Nav.Link>
+                      </Nav>
+                    </Navbar.Collapse>
+                    <div className="d-flex align-items-center gap-2 ms-auto">
+                      <span>{user?.name} logged in</span>
+                      <LogoutButton handleLogout={handleLogout} />
+                    </div>
+                  </div>
+                </Container>
+              </Navbar>
+            </header>
+          </>
+        )}
+        <Alert />
+        {!user ? (
+          <form
+            onSubmit={handleLogin}
+            className="d-flex flex-column gap-3 bg-light p-4 mt-2"
           >
-            <nav
-              style={{
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "space-between",
-              }}
-            >
-              <div
-                style={{
-                  display: "flex",
-                  gap: 10,
-                }}
-              >
-                <Link to={"/"}>blogs</Link>
-                <Link to={"/users"}>users</Link>
-              </div>
-              <div
-                style={{
-                  display: "flex",
-                  gap: 5,
-                }}
-              >
-                <p>{user.name} logged in</p>
-                <LogoutButton handleLogout={handleLogout} />
-              </div>
-            </nav>
-          </header>
-          <h2>blog app</h2>
-        </>
-      )}
-      {!user ? (
-        <form onSubmit={handleLogin}>
-          <div>
-            username
-            <input
-              type="text"
-              value={username}
-              name="Username"
-              onChange={({ target }) => setUsername(target.value)}
+            <div>
+              <label className="form-label">Username</label>
+              <input
+                className="form-control"
+                type="text"
+                value={username}
+                name="Username"
+                onChange={({ target }) => setUsername(target.value)}
+              />
+            </div>
+
+            <div>
+              <label className="form-label">Password</label>
+              <input
+                className="form-control"
+                type="password"
+                value={password}
+                name="Password"
+                onChange={({ target }) => setPassword(target.value)}
+              />
+            </div>
+
+            <Button className="btn btn-primary align-self-start" type="submit">
+              Login
+            </Button>
+          </form>
+        ) : (
+          <Routes>
+            <Route
+              path="*"
+              element={
+                <Container>
+                  {user ? (
+                    <>
+                      <AddForm />
+                      {queryGetAll.data.map((blog) => (
+                        <Blog key={blog.id} blog={blog} />
+                      ))}
+                    </>
+                  ) : (
+                    <form onSubmit={handleLogin}>
+                      <div>
+                        username
+                        <input
+                          type="text"
+                          value={username}
+                          name="Username"
+                          onChange={({ target }) => setUsername(target.value)}
+                        />
+                      </div>
+                      <div>
+                        password
+                        <input
+                          type="password"
+                          value={password}
+                          name="Password"
+                          onChange={({ target }) => setPassword(target.value)}
+                        />
+                      </div>
+                      <button type="submit">login</button>
+                    </form>
+                  )}
+                </Container>
+              }
             />
-          </div>
-          <div>
-            password
-            <input
-              type="password"
-              value={password}
-              name="Password"
-              onChange={({ target }) => setPassword(target.value)}
-            />
-          </div>
-          <button type="submit">login</button>
-        </form>
-      ) : (
-        <Routes>
-          <Route
-            path="*"
-            element={
-              <main>
-                {user ? (
-                  <>
-                    <AddForm />
-                    {queryGetAll.data.map((blog) => (
-                      <Blog key={blog.id} blog={blog} />
-                    ))}
-                  </>
-                ) : (
-                  <form onSubmit={handleLogin}>
-                    <div>
-                      username
-                      <input
-                        type="text"
-                        value={username}
-                        name="Username"
-                        onChange={({ target }) => setUsername(target.value)}
-                      />
-                    </div>
-                    <div>
-                      password
-                      <input
-                        type="password"
-                        value={password}
-                        name="Password"
-                        onChange={({ target }) => setPassword(target.value)}
-                      />
-                    </div>
-                    <button type="submit">login</button>
-                  </form>
-                )}
-              </main>
-            }
-          />
-          <Route path="/users" element={<Users />} />
-          <Route path="/users/:id" element={<User />} />
-          <Route path="/blogs/:id" element={<BlogRoute />} />
-        </Routes>
-      )}
-    </Router>
+            <Route path="/users" element={<Users />} />
+            <Route path="/users/:id" element={<User />} />
+            <Route path="/blogs/:id" element={<BlogRoute />} />
+          </Routes>
+        )}
+      </Router>
+    </main>
   );
 };
 
@@ -186,14 +199,15 @@ function LogoutButton({ handleLogout }) {
   const navigate = useNavigate();
 
   return (
-    <button
+    <Button
+      variant="danger"
       onClick={() => {
         navigate("/");
         handleLogout();
       }}
     >
       logout
-    </button>
+    </Button>
   );
 }
 
