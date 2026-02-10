@@ -1,6 +1,13 @@
 import { useEffect, useState } from "react";
-import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  Link,
+  useNavigate,
+} from "react-router-dom";
 import { Anecdote } from "./components/Anecdote";
+import { useField } from "./hooks";
 
 const Menu = () => {
   const padding = {
@@ -27,7 +34,7 @@ const AnecdoteList = ({ anecdotes }) => (
     <ul>
       {anecdotes.map((anecdote) => (
         <li key={anecdote.id}>
-          <a href={`/anecdotes/${anecdote.id}`}>{anecdote.content}</a>
+          <Link href={`/anecdotes/${anecdote.id}`}>{anecdote.content}</Link>
         </li>
       ))}
     </ul>
@@ -60,17 +67,18 @@ const Footer = () => (
   <div>
     Anecdote app for <a href="https://fullstackopen.com/">Full Stack Open</a>.
     See{" "}
-    <a href="https://github.com/fullstack-hy2020/routed-anecdotes/blob/master/src/App.js">
-      https://github.com/fullstack-hy2020/routed-anecdotes/blob/master/src/App.js
+    <a href="https://github.com/lukadevv-edu/fullstackopen/tree/main/part7/routed-anecdotes">
+      https://github.com/lukadevv-edu/fullstackopen/tree/main/part7/routed-anecdotes
     </a>{" "}
     for the source code.
   </div>
 );
 
 const CreateNew = (props) => {
-  const [content, setContent] = useState("");
-  const [author, setAuthor] = useState("");
-  const [info, setInfo] = useState("");
+  const navigate = useNavigate();
+  const content = useField("text");
+  const author = useField("text");
+  const info = useField("text");
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -81,15 +89,17 @@ const CreateNew = (props) => {
     }
 
     props.addNew({
-      content,
-      author,
-      info,
+      content: content.value,
+      author: author.value,
+      info: info.value,
       votes: 0,
     });
 
-    setContent("");
-    setAuthor("");
-    setInfo("");
+    content.reset();
+    author.reset();
+    info.reset();
+
+    navigate("/");
   };
 
   return (
@@ -100,27 +110,37 @@ const CreateNew = (props) => {
           content
           <input
             name="content"
-            value={content}
-            onChange={(e) => setContent(e.target.value)}
+            value={content.value}
+            onChange={(e) => content.onChange(e)}
           />
         </div>
         <div>
           author
           <input
             name="author"
-            value={author}
-            onChange={(e) => setAuthor(e.target.value)}
+            value={author.value}
+            onChange={(e) => author.onChange(e)}
           />
         </div>
         <div>
           url for more info
           <input
             name="info"
-            value={info}
-            onChange={(e) => setInfo(e.target.value)}
+            value={info.value}
+            onChange={(e) => info.onChange(e)}
           />
         </div>
         <button type="submit">create</button>
+        <button
+          type="reset"
+          onClick={() => {
+            content.reset();
+            author.reset();
+            info.reset();
+          }}
+        >
+          reset
+        </button>
       </form>
     </div>
   );
@@ -156,6 +176,7 @@ const App = () => {
 
   const addNew = (anecdote) => {
     anecdote.id = Math.round(Math.random() * 10000);
+    console.log(anecdote);
     setAnecdotes((old) => old.concat(anecdote));
     setNotification(`a new anecdote ${anecdote.content} created!`);
   };

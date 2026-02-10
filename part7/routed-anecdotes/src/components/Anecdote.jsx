@@ -3,7 +3,7 @@ import { useParams } from "react-router-dom";
 export function Anecdote({ anecdotes }) {
   const id = useParams().id;
 
-  const anecdote = anecdotes.find((n) => n.id == id);
+  const anecdote = anecdotes.find((n) => n.id == Number(id));
 
   if (!anecdote) {
     return <h1>404: Note does not exists!</h1>;
