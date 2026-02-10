@@ -185,6 +185,7 @@ const App = () => {
       <AddForm handleSubmit={handleSubmit} />
       {blogs.map((blog) => (
         <Blog
+          username={user.username}
           key={blog.id}
           blog={blog}
           onLike={() => onLike(blog)}

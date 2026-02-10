@@ -20,9 +20,14 @@ router.post("/", async (request, response, next) => {
 
   const result = await blog.save();
 
-  await User.findByIdAndUpdate(user.id, { $push: { blogs: result._id } });
+  await User.findByIdAndUpdate(user.id, {
+    $push: { blogs: result._id },
+  }).populate("user");
 
-  response.status(201).json(result);
+  response.status(201).json({
+    ...result,
+    user,
+  });
 });
 
 router.delete("/:id", async (request, response) => {
@@ -56,6 +61,30 @@ router.put("/:id", async (request, response) => {
     new: true,
     runValidators: true,
   });
+
+  response.json({
+    id: result.id,
+    title: result.title,
+    author: result.author,
+    url: result.url,
+    likes: result.likes,
+    user: request.user,
+  });
+});
+
+router.post("/:id/comments", async (request, response) => {
+  const comment = request.body.comment;
+
+  const result = await Blog.findByIdAndUpdate(
+    request.params.id,
+    {
+      $push: { comments: comment },
+    },
+    {
+      new: true,
+      runValidators: true,
+    },
+  );
 
   response.json(result);
 });
