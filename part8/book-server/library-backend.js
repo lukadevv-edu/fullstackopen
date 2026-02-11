@@ -155,16 +155,20 @@ const resolvers = {
   },
   Mutation: {
     addBook: (_, newBook) => {
-      books.push(newBook);
+      const bookToAdd = {
+        id: (Math.random() * 100000).toFixed(0),
+        ...newBook,
+      };
+      books.push(bookToAdd);
 
-      if (!authors.some((each) => each.name === newBook.author)) {
+      if (!authors.some((each) => each.name === bookToAdd.author)) {
         authors.push({
           id: (Math.random() * 100000).toFixed(0),
-          name: newBook.author,
+          name: bookToAdd.author,
         });
       }
 
-      return newBook;
+      return books[books.length - 1];
     },
     editAuthor: (_, { name, setBornTo }) => {
       const author = authors.find((each) => each.name === name);
