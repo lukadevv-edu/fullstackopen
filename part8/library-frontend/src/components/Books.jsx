@@ -3,19 +3,27 @@ import { useQuery } from "@apollo/client/react";
 import { useState } from "react";
 
 // eslint-disable-next-line react-refresh/only-export-components
+export const BOOK_FRAGMENT = gql`
+  fragment BookDetails on Book {
+    id
+    published
+    title
+    genres
+    author {
+      id
+      name
+    }
+  }
+`;
+
+// eslint-disable-next-line react-refresh/only-export-components
 export const ALL_BOOKS = gql`
   query AllBooks($genre: String) {
     allBooks(genre: $genre) {
-      id
-      published
-      title
-      genres
-      author {
-        id
-        name
-      }
+      ...BookDetails
     }
   }
+  ${BOOK_FRAGMENT}
 `;
 
 const Books = (props) => {

@@ -4,6 +4,7 @@ import Books from "./components/Books";
 import NewBook from "./components/NewBook";
 import LoginForm from "./components/LoginForm";
 import Recommend from "./components/Recommend";
+import { useWSSubscribe } from "./hooks/useWSSubscribe";
 
 const App = () => {
   const [token, setToken] = useState(null);
@@ -13,6 +14,8 @@ const App = () => {
     // eslint-disable-next-line react-hooks/set-state-in-effect
     setToken(localStorage.getItem("token") ?? null);
   }, []);
+
+  useWSSubscribe();
 
   return (
     <div>
