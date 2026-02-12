@@ -7,6 +7,10 @@ const schema = new Schema({
     unique: true,
     minlength: 3,
   },
+  favoriteGenre: {
+    type: String,
+    required: true,
+  },
 });
 
 export default model("User", schema);

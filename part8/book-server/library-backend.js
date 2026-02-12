@@ -7,6 +7,7 @@ import Book from "./models/Book.js";
 import Author from "./models/Author.js";
 import User from "./models/User.js";
 import { GraphQLError } from "graphql";
+import jwt from "jsonwebtoken";
 
 const MONGODB_URI = process.env.MONGODB_URI;
 
@@ -14,8 +15,44 @@ console.log("connecting to", MONGODB_URI);
 
 mongoose
   .connect(MONGODB_URI)
-  .then(() => {
+  .then(async () => {
     console.log("connected to MongoDB");
+
+    const favoriteGenre = "refactoring";
+
+    let rootUser = await User.findOne({ username: "admin" });
+
+    if (!rootUser) {
+      rootUser = new User({
+        username: "admin",
+        favoriteGenre: favoriteGenre,
+      });
+      await rootUser.save();
+      console.log(
+        "'admin' user was created with favorite genre:",
+        favoriteGenre,
+      );
+    }
+
+    const bookExists = await Book.exists({ title: "Refactoring" });
+
+    if (!bookExists) {
+      let author = await Author.findOne({ name: "Martin Fowler" });
+      if (!author) {
+        author = new Author({ name: "Martin Fowler" });
+        await author.save();
+      }
+
+      const book = new Book({
+        title: "Refactoring",
+        published: 1999,
+        author: author._id,
+        genres: [favoriteGenre, "software engineering"],
+      });
+
+      await book.save();
+      console.log("Sample book created to match user's favorite genre");
+    }
   })
   .catch((error) => {
     console.log("error connection to MongoDB:", error.message);

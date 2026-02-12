@@ -3,6 +3,7 @@ import { useMutation } from "@apollo/client/react";
 import { useState } from "react";
 import { ALL_BOOKS } from "./Books";
 import { ALL_AUTHORS } from "./Authors";
+import { RECOMMEND_ALL_BOOKS } from "./Recommend";
 
 const ADD_BOOK = gql`
   mutation AddBook(
@@ -19,7 +20,10 @@ const ADD_BOOK = gql`
     ) {
       id
       genres
-      author
+      author {
+        id
+        name
+      }
       published
       title
     }
@@ -27,9 +31,7 @@ const ADD_BOOK = gql`
 `;
 
 const NewBook = (props) => {
-  const [mutate] = useMutation(ADD_BOOK, {
-    refetchQueries: [{ query: ALL_BOOKS }, { query: ALL_AUTHORS }],
-  });
+  const [mutate] = useMutation(ADD_BOOK);
   const [title, setTitle] = useState("");
   const [author, setAuthor] = useState("");
   const [published, setPublished] = useState("");
@@ -50,6 +52,19 @@ const NewBook = (props) => {
         genres,
         published: Number(published),
       },
+      refetchQueries: [
+        { query: ALL_BOOKS, variables: { genre: null } },
+        ...genres.map((genre) => ({
+          query: ALL_BOOKS,
+          variables: { genre },
+        })),
+        { query: RECOMMEND_ALL_BOOKS, variables: { genre: null } },
+        ...genres.map((genre) => ({
+          query: RECOMMEND_ALL_BOOKS,
+          variables: { genre },
+        })),
+        { query: ALL_AUTHORS },
+      ],
     });
 
     setTitle("");
