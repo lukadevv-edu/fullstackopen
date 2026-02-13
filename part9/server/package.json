@@ -7,7 +7,9 @@
   "type": "commonjs",
   "main": "index.js",
   "scripts": {
-    "dev": "ts-node src/index.ts"
+    "dev": "ts-node src/index.ts",
+    "calculateBmi": "ts-node src/bmiCalculator.ts",
+    "calculateExercises": "ts-node src/exerciseCalculator.ts"
   },
   "devDependencies": {
     "ts-node": "^10.9.2",
