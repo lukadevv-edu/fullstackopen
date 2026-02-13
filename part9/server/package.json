@@ -7,12 +7,21 @@
   "type": "commonjs",
   "main": "index.js",
   "scripts": {
-    "dev": "ts-node src/index.ts",
-    "calculateBmi": "ts-node src/bmiCalculator.ts",
-    "calculateExercises": "ts-node src/exerciseCalculator.ts"
+    "start": "ts-node src/index.ts",
+    "dev": "ts-node-dev src/index.ts",
+    "calculateBmi": "ts-node src/scripts/bmiCalculator.ts",
+    "calculateExercises": "ts-node src/scripts/exerciseCalculator.ts"
   },
   "devDependencies": {
+    "@types/express": "^5.0.6",
+    "@typescript-eslint/eslint-plugin": "^8.55.0",
+    "@typescript-eslint/parser": "^8.55.0",
+    "eslint": "^9.39.2",
     "ts-node": "^10.9.2",
+    "ts-node-dev": "^2.0.0",
     "typescript": "^5.9.3"
+  },
+  "dependencies": {
+    "express": "^5.2.1"
   }
 }

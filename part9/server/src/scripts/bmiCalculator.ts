@@ -20,7 +20,7 @@ function calculateBmi(height: number, weight: number) {
 
   const bmi = calculateBmi(Number(height), Number(weight));
 
-  let result = "Unknown";
+  let result;
 
   /*
     Underweight (Severe thinness)	    < 16.0	    < 0.64
