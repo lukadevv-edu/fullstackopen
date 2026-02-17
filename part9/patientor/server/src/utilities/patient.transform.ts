@@ -44,10 +44,13 @@ export function toNewPatientEntry(object: unknown): NewPatientEntry {
       ssn: entry.ssn,
       gender: entry.gender,
       occupation: entry.occupation,
+      entries: [],
     };
 
     return newEntry;
   }
 
-  throw new Error("Some fields are missing or invalid to create a 'NewPatientEntry'");
+  throw new Error(
+    "Some fields are missing or invalid to create a 'NewPatientEntry'",
+  );
 }
