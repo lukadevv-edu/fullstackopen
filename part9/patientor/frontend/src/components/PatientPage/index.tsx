@@ -1,13 +1,17 @@
 import { useParams } from "react-router-dom";
-import { Gender, Patient } from "../../types";
+import { Gender, PatientType } from "../../types";
 import { useEffect, useState } from "react";
 import patientService from "../../services/patients";
 import { Female, Male } from "@mui/icons-material";
+import { EntryDetails } from "../EntryDetails";
+import { AddEntryForm } from "./AddEntryForm";
+import { Button } from "@mui/material";
 
 export default function PatientPage() {
   const id = useParams().id;
 
-  const [patient, setPatient] = useState<Patient | null>(null);
+  const [patient, setPatient] = useState<PatientType | null>(null);
+  const [showAdd, setShowAdd] = useState<boolean>(false);
 
   useEffect(() => {
     if (!id) {
@@ -23,7 +27,7 @@ export default function PatientPage() {
     getPatient();
   }, [id]);
 
-  if (!patient) {
+  if (!id || !patient) {
     return <p>Not found!</p>;
   }
 
@@ -32,11 +36,29 @@ export default function PatientPage() {
       <div>
         <h2>
           {patient.name}{" "}
-          <span>{patient.gender === Gender.Male ? <Male /> : <Female />}</span>
+          <span>{patient.gender === Gender.male ? <Male /> : <Female />}</span>
         </h2>
       </div>
-      <p>ssh: {patient.ssn}</p>
+      <p>ssn: {patient.ssn}</p>
       <p>occupation: {patient.occupation}</p>
+      {showAdd ? (
+        <AddEntryForm
+          id={id}
+          onCancel={() => setShowAdd(false)}
+          onSuccess={setPatient}
+        />
+      ) : (
+        <Button variant="contained" onClick={() => setShowAdd(true)}>
+          ADD NEW ENTRY
+        </Button>
+      )}
+
+      <div>
+        <h2>entries</h2>
+        {patient.entries.map((entry) => (
+          <EntryDetails key={entry.id} entry={entry} />
+        ))}
+      </div>
     </div>
   );
 }

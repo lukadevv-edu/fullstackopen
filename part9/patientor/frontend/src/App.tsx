@@ -2,25 +2,25 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 import { BrowserRouter as Router, Route, Link, Routes } from "react-router-dom";
 import { Button, Divider, Container, Typography } from "@mui/material";
-
 import { apiBaseUrl } from "./constants";
-import { Patient } from "./types";
-
 import patientService from "./services/patients";
 import PatientListPage from "./components/PatientListPage";
 import PatientPage from "./components/PatientPage";
+import { PatientType } from "./types";
 
 const App = () => {
-  const [patients, setPatients] = useState<Patient[]>([]);
+  const [patients, setPatients] = useState<PatientType[]>([]);
 
   useEffect(() => {
-    void axios.get<void>(`${apiBaseUrl}/ping`);
+    axios.get<void>(`${apiBaseUrl}/ping`);
 
-    const fetchPatientList = async () => {
+    const fetchAll = async () => {
       const patients = await patientService.getAll();
+
       setPatients(patients);
     };
-    void fetchPatientList();
+
+    fetchAll();
   }, []);
 
   return (
